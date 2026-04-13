@@ -1,0 +1,12 @@
+Implante o PRD Mary Education Hub (MVP v0.1.1).
+
+Regras obrigatórias:
+- Respeite estritamente o escopo Tier A funcional.
+- Tier B: criar apenas tabelas/modelos/contratos estruturais, sem endpoints, sem UI, sem services.
+- Stack: FastAPI + Next.js + PostgreSQL + Redis + SQLAlchemy 2 + Pydantic v2 + Docker Compose.
+- Antes de codar, valide a estrutura do repo.
+- Se o app ainda não existir, crie a base do projeto do zero.
+- Não extrapole para integrações externas, scraping, IA ou planejamento avançado.
+
+Caminho do PRD:
+/home/node/.openclaw/media/inbound/MARY_EDUCATION_HUB_PRD---fe91c685-e326-4c79-b627-d2dd2bc3ece1.pdf
