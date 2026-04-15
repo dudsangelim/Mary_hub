@@ -5,7 +5,7 @@ import uuid
 from contextlib import asynccontextmanager
 
 import structlog
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
@@ -58,6 +58,16 @@ async def log_requests(request: Request, call_next):
     return response
 
 
+@app.exception_handler(HTTPException)
+async def http_exception_handler(_: Request, exc: HTTPException) -> JSONResponse:
+    if isinstance(exc.detail, dict):
+        return JSONResponse(status_code=exc.status_code, content={"error": exc.detail})
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={"error": {"code": "HTTP_ERROR", "message": str(exc.detail), "details": {}}},
+    )
+
+
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(_: Request, exc: RequestValidationError) -> JSONResponse:
     return JSONResponse(
@@ -68,10 +78,8 @@ async def validation_exception_handler(_: Request, exc: RequestValidationError) 
 
 @app.exception_handler(Exception)
 async def unhandled_exception_handler(_: Request, exc: Exception) -> JSONResponse:
-    if isinstance(exc, RequestValidationError):
+    if isinstance(exc, (RequestValidationError, HTTPException)):
         raise exc
-    if hasattr(exc, "status_code") and hasattr(exc, "detail") and isinstance(exc.detail, dict):
-        return JSONResponse(status_code=exc.status_code, content={"error": exc.detail})
     logger.exception("unhandled_error")
     return JSONResponse(
         status_code=500,
