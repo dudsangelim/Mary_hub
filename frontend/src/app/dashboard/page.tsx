@@ -4,18 +4,32 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 
 import { Header } from "@/components/layout/Header";
+import { Button } from "@/components/ui/Button";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { useAuth } from "@/hooks/useAuth";
 import { apiFetch } from "@/lib/api";
-import type { DashboardSummary } from "@/lib/types";
+import type { ClassifyPendingResult, DashboardSummary } from "@/lib/types";
 
 export default function DashboardPage() {
   const { isReady, isAuthenticated } = useAuth(true);
   const [summary, setSummary] = useState<DashboardSummary | null>(null);
+  const [classifying, setClassifying] = useState(false);
+  const [classifyResult, setClassifyResult] = useState<ClassifyPendingResult | null>(null);
 
   useEffect(() => {
     apiFetch<DashboardSummary>("/dashboard/summary").then(setSummary);
   }, []);
+
+  async function handleClassifyPending() {
+    setClassifying(true);
+    setClassifyResult(null);
+    try {
+      const result = await apiFetch<ClassifyPendingResult>("/tasks/classify-pending", { method: "POST" });
+      setClassifyResult(result);
+    } finally {
+      setClassifying(false);
+    }
+  }
 
   if (!isReady || !isAuthenticated) {
     return <div className="rounded-[2rem] bg-white p-6 text-sm text-slate-600 shadow-sm">Carregando...</div>;
@@ -24,6 +38,17 @@ export default function DashboardPage() {
   return (
     <main className="space-y-6">
       <Header title="Dashboard" subtitle="Atalhos rápidos para registrar materiais, deveres e observações do dia." />
+      <div className="flex flex-wrap items-center gap-3">
+        <Button variant="secondary" onClick={handleClassifyPending} disabled={classifying}>
+          {classifying ? "Classificando…" : "Classificar pendentes com IA"}
+        </Button>
+        {classifyResult ? (
+          <p className="text-sm text-slate-600">
+            {classifyResult.classified} de {classifyResult.total} classificadas
+            {classifyResult.skipped > 0 ? ` · ${classifyResult.skipped} ignoradas` : ""}
+          </p>
+        ) : null}
+      </div>
       {!summary || summary.students.length === 0 ? (
         <EmptyState title="Sem dados" description="Rode o seed e faça login para visualizar Lucas e Malu." href="/" cta="Voltar ao login" />
       ) : (

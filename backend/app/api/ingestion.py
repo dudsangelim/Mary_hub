@@ -15,6 +15,7 @@ from app.schemas.task import (
     OpenClawAgendaIngestResponse,
     DashboardTodayResponse,
 )
+from app.services.classification_service import classify_task
 from app.services.task_service import (
     build_openclaw_student_context,
     import_agenda_tasks,
@@ -47,6 +48,9 @@ async def ingest_openclaw_agenda(
     if x_openclaw_secret != settings.openclaw_ingest_secret:
         raise error_response("OPENCLAW_INGEST_FORBIDDEN", "Invalid OpenClaw ingest secret", http_status=403)
 
+    from sqlalchemy import select as _select
+    from app.models.family import Student as _Student
+
     guardian = await get_default_guardian(session)
     imported_tasks, created, updated, skipped = await import_agenda_tasks(
         session,
@@ -58,6 +62,17 @@ async def ingest_openclaw_agenda(
             items=payload.items,
         ),
     )
+
+    # Auto-classify new tasks (best-effort — never blocks the response)
+    if created > 0:
+        student = await session.scalar(_select(_Student).where(_Student.id == payload.student_id))
+        if student is not None:
+            for task in imported_tasks:
+                try:
+                    await classify_task(session, task, student)
+                except Exception:
+                    pass  # classification failure must not fail ingestion
+
     context = await build_openclaw_student_context(session, guardian, payload.student_id, imported_tasks)
 
     return OpenClawAgendaIngestResponse(

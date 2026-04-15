@@ -38,6 +38,8 @@ services:
       LOG_LEVEL: ${LOG_LEVEL:-INFO}
       CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:3100}
       OPENCLAW_INGEST_SECRET: ${OPENCLAW_INGEST_SECRET}
+      OPENROUTER_API_KEY: ${OPENROUTER_API_KEY}
+      OPENROUTER_MODEL: ${OPENROUTER_MODEL:-anthropic/claude-haiku-4-5}
     volumes:
       - ./backend:/app
       - uploads:/app/uploads

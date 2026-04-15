@@ -19,6 +19,8 @@ class Settings(BaseSettings):
     log_level: str = Field(default="INFO", alias="LOG_LEVEL")
     cors_origins: str = Field(default="http://localhost:3100", alias="CORS_ORIGINS")
     openclaw_ingest_secret: str = Field(default="", alias="OPENCLAW_INGEST_SECRET")
+    openrouter_api_key: str = Field(default="", alias="OPENROUTER_API_KEY")
+    openrouter_model: str = Field(default="anthropic/claude-haiku-4-5", alias="OPENROUTER_MODEL")
 
     @property
     def upload_max_size_bytes(self) -> int:

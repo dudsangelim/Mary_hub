@@ -196,3 +196,23 @@ export type ProviderSyncTriggerResponse = {
   sync_log: ProviderSyncLog;
   message: string;
 };
+
+export type ClassificationResult = {
+  ok: boolean;
+  task_id: string;
+  curriculum_item_id: string | null;
+  difficulty_assessed: string | null;
+  estimated_duration: number | null;
+  classification_confidence: number | null;
+  reasoning: string;
+  classified_at: string | null;
+};
+
+export type ClassifyPendingResult = {
+  ok: boolean;
+  message: string;
+  total: number;
+  classified: number;
+  skipped: number;
+  failed: number;
+};
