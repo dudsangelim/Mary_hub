@@ -96,7 +96,7 @@ export default function TutorPage() {
     }
   };
 
-  const studentName = "Lucas";
+  const studentName = session?.student_name ?? "Lucas";
 
   if (screen === "loading") {
     return (

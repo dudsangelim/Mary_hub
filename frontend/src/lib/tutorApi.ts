@@ -16,6 +16,7 @@ export interface SessionStep {
 export interface TutorSession {
   id: string;
   student_id: string | null;
+  student_name: string | null;
   plan_id: string;
   task_id: string | null;
   title: string;

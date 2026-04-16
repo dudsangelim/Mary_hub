@@ -16,6 +16,9 @@ def _audio_key(text: str, voice: str, model: str) -> str:
 
 async def get_or_generate_tts(text: str, voice: str | None = None) -> tuple[bytes, bool]:
     """Returns (audio_bytes, was_cached)."""
+    if not settings.openai_api_key:
+        return b"", False
+
     resolved_voice = voice or settings.openai_tts_voice
     model = settings.openai_tts_model
     cache_key = _audio_key(text, resolved_voice, model)

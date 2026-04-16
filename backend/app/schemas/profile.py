@@ -10,13 +10,13 @@ from app.schemas.common import ORMModel
 
 
 class Weekday(str, Enum):
-    mon = "mon"
-    tue = "tue"
-    wed = "wed"
-    thu = "thu"
-    fri = "fri"
-    sat = "sat"
-    sun = "sun"
+    monday = "monday"
+    tuesday = "tuesday"
+    wednesday = "wednesday"
+    thursday = "thursday"
+    friday = "friday"
+    saturday = "saturday"
+    sunday = "sunday"
 
 
 class SessionKind(str, Enum):
