@@ -40,6 +40,11 @@ services:
       OPENCLAW_INGEST_SECRET: ${OPENCLAW_INGEST_SECRET}
       OPENROUTER_API_KEY: ${OPENROUTER_API_KEY}
       OPENROUTER_MODEL: ${OPENROUTER_MODEL:-anthropic/claude-haiku-4-5}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      OPENAI_TTS_MODEL: ${OPENAI_TTS_MODEL:-tts-1}
+      OPENAI_TTS_VOICE: ${OPENAI_TTS_VOICE:-nova}
+      TUTOR_LUCAS_MODEL: ${TUTOR_LUCAS_MODEL:-openai/gpt-4o-mini}
+      SCRAPING_SERVICE_URL: ${SCRAPING_SERVICE_URL:-http://172.17.0.1:3002}
     volumes:
       - ./backend:/app
       - uploads:/app/uploads

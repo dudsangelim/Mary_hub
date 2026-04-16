@@ -10,7 +10,7 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
-from app.api import auth, curriculum, dashboard, families, ingestion, materials, providers, students, tasks
+from app.api import auth, curriculum, dashboard, families, ingestion, materials, providers, schedule, students, tasks, tutor
 from app.config import settings
 from app.logging_config import configure_logging
 from app.redis import redis_client
@@ -25,7 +25,7 @@ async def lifespan(_: FastAPI):
     await redis_client.aclose()
 
 
-app = FastAPI(title="Mary Education Hub", version="0.1.1", lifespan=lifespan)
+app = FastAPI(title="Mary Education Hub", version="0.2.0", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
@@ -102,3 +102,5 @@ app.include_router(curriculum.router, prefix=api_prefix)
 app.include_router(dashboard.router, prefix=api_prefix)
 app.include_router(providers.router, prefix=api_prefix)
 app.include_router(ingestion.router, prefix=api_prefix)
+app.include_router(schedule.router, prefix=api_prefix)
+app.include_router(tutor.router, prefix=api_prefix)

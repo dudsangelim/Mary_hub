@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import asyncio
-from datetime import UTC, date, datetime, timedelta
+from datetime import date, timedelta
 
 from sqlalchemy import select
 
@@ -14,15 +14,31 @@ from app.security import hash_password
 
 
 SUBJECTS = [
+    # 1º ano EF — Lucas
     {"slug": "portugues-1fund", "name": "Língua Portuguesa", "grade": "1_fund", "category": "core"},
     {"slug": "matematica-1fund", "name": "Matemática", "grade": "1_fund", "category": "core"},
     {"slug": "ciencias-1fund", "name": "Ciências", "grade": "1_fund", "category": "core"},
     {"slug": "geografia-1fund", "name": "Geografia", "grade": "1_fund", "category": "core"},
     {"slug": "historia-1fund", "name": "História", "grade": "1_fund", "category": "core"},
     {"slug": "ciencias-humanas-1fund", "name": "Ciências Humanas", "grade": "1_fund", "category": "core"},
+    {"slug": "artes-1fund", "name": "Artes", "grade": "1_fund", "category": "enrichment"},
+    {"slug": "educacao-fisica-1fund", "name": "Educação Física", "grade": "1_fund", "category": "enrichment"},
+    {"slug": "ensino-religioso-1fund", "name": "Ensino Religioso", "grade": "1_fund", "category": "enrichment"},
+    {"slug": "musica-1fund", "name": "Música", "grade": "1_fund", "category": "enrichment"},
+    {"slug": "ingles-1fund", "name": "Inglês", "grade": "1_fund", "category": "enrichment"},
+    {"slug": "formacao-crista-1fund", "name": "Formação Cristã", "grade": "1_fund", "category": "enrichment"},
+    {"slug": "projeto-vida-1fund", "name": "Projeto de Vida", "grade": "1_fund", "category": "enrichment"},
+    # 7º ano EF — Malu
     {"slug": "portugues-7fund", "name": "Português", "grade": "7_fund", "category": "core"},
     {"slug": "matematica-7fund", "name": "Matemática", "grade": "7_fund", "category": "core"},
     {"slug": "ingles-7fund", "name": "Inglês", "grade": "7_fund", "category": "core"},
+    {"slug": "ciencias-7fund", "name": "Ciências", "grade": "7_fund", "category": "core"},
+    {"slug": "historia-7fund", "name": "História", "grade": "7_fund", "category": "core"},
+    {"slug": "geografia-7fund", "name": "Geografia", "grade": "7_fund", "category": "core"},
+    {"slug": "artes-7fund", "name": "Artes", "grade": "7_fund", "category": "enrichment"},
+    {"slug": "educacao-fisica-7fund", "name": "Educação Física", "grade": "7_fund", "category": "enrichment"},
+    {"slug": "ensino-religioso-7fund", "name": "Ensino Religioso", "grade": "7_fund", "category": "enrichment"},
+    {"slug": "espanhol-7fund", "name": "Espanhol", "grade": "7_fund", "category": "enrichment"},
 ]
 
 CURRICULUM = {
@@ -71,6 +87,110 @@ CURRICULUM = {
         "Reading comprehension: short articles",
         "Vocabulary: daily routines and travel",
     ],
+}
+
+# Lucas 1º ano FT — weekly school schedule (7 blocks/day validates Phase A gate)
+LUCAS_WEEKLY_SCHEDULE = {
+    "mon": [
+        {"subject": "Língua Portuguesa", "start": "07:00", "end": "07:50", "kind": "homework"},
+        {"subject": "Matemática", "start": "07:50", "end": "08:40", "kind": "homework"},
+        {"subject": "Ciências", "start": "08:40", "end": "09:30", "kind": "homework"},
+        {"subject": "Ciências Humanas", "start": "09:30", "end": "10:20", "kind": "homework"},
+        {"subject": "Artes", "start": "10:40", "end": "11:30", "kind": "homework"},
+        {"subject": "Educação Física", "start": "11:30", "end": "12:20", "kind": "homework"},
+        {"subject": "Língua Portuguesa", "start": "13:00", "end": "13:50", "kind": "review"},
+    ],
+    "tue": [
+        {"subject": "Matemática", "start": "07:00", "end": "07:50", "kind": "homework"},
+        {"subject": "Língua Portuguesa", "start": "07:50", "end": "08:40", "kind": "homework"},
+        {"subject": "História", "start": "08:40", "end": "09:30", "kind": "homework"},
+        {"subject": "Geografia", "start": "09:30", "end": "10:20", "kind": "homework"},
+        {"subject": "Música", "start": "10:40", "end": "11:30", "kind": "homework"},
+        {"subject": "Inglês", "start": "11:30", "end": "12:20", "kind": "homework"},
+        {"subject": "Matemática", "start": "13:00", "end": "13:50", "kind": "review"},
+    ],
+    "wed": [
+        {"subject": "Língua Portuguesa", "start": "07:00", "end": "07:50", "kind": "homework"},
+        {"subject": "Ciências", "start": "07:50", "end": "08:40", "kind": "homework"},
+        {"subject": "Matemática", "start": "08:40", "end": "09:30", "kind": "homework"},
+        {"subject": "Artes", "start": "09:30", "end": "10:20", "kind": "homework"},
+        {"subject": "Formação Cristã", "start": "10:40", "end": "11:30", "kind": "homework"},
+        {"subject": "Educação Física", "start": "11:30", "end": "12:20", "kind": "homework"},
+        {"subject": "Língua Portuguesa", "start": "13:00", "end": "13:50", "kind": "review"},
+    ],
+    "thu": [
+        {"subject": "Matemática", "start": "07:00", "end": "07:50", "kind": "homework"},
+        {"subject": "Língua Portuguesa", "start": "07:50", "end": "08:40", "kind": "homework"},
+        {"subject": "Ciências Humanas", "start": "08:40", "end": "09:30", "kind": "homework"},
+        {"subject": "História", "start": "09:30", "end": "10:20", "kind": "homework"},
+        {"subject": "Projeto de Vida", "start": "10:40", "end": "11:30", "kind": "homework"},
+        {"subject": "Inglês", "start": "11:30", "end": "12:20", "kind": "homework"},
+        {"subject": "Matemática", "start": "13:00", "end": "13:50", "kind": "review"},
+    ],
+    "fri": [
+        {"subject": "Língua Portuguesa", "start": "07:00", "end": "07:50", "kind": "review"},
+        {"subject": "Matemática", "start": "07:50", "end": "08:40", "kind": "review"},
+        {"subject": "Ciências", "start": "08:40", "end": "09:30", "kind": "review"},
+        {"subject": "Artes", "start": "09:30", "end": "10:20", "kind": "light"},
+        {"subject": "Música", "start": "10:40", "end": "11:30", "kind": "light"},
+        {"subject": "Educação Física", "start": "11:30", "end": "12:20", "kind": "light"},
+    ],
+}
+
+# Lucas tutor windows (evening homework sessions with Mary)
+LUCAS_TUTOR_WINDOWS = {
+    "mon": [{"start": "20:15", "end": "21:30", "kind": "homework", "label": "Tarefa de casa"}],
+    "tue": [{"start": "20:15", "end": "21:30", "kind": "homework", "label": "Tarefa de casa"}],
+    "wed": [{"start": "20:15", "end": "21:30", "kind": "homework", "label": "Tarefa de casa"}],
+    "thu": [{"start": "20:15", "end": "21:30", "kind": "homework", "label": "Tarefa de casa"}],
+    "fri": [{"start": "20:15", "end": "21:30", "kind": "light", "label": "Revisão leve"}],
+    "sun": [{"start": "20:00", "end": "20:45", "kind": "weekly_prep", "label": "Preparação semanal"}],
+}
+
+# Malu 7º ano D — weekly schedule
+MALU_WEEKLY_SCHEDULE = {
+    "mon": [
+        {"subject": "Português", "start": "07:00", "end": "07:50", "kind": "homework"},
+        {"subject": "Matemática", "start": "07:50", "end": "08:40", "kind": "homework"},
+        {"subject": "Ciências", "start": "08:40", "end": "09:30", "kind": "homework"},
+        {"subject": "História", "start": "09:30", "end": "10:20", "kind": "homework"},
+        {"subject": "Educação Física", "start": "10:40", "end": "11:30", "kind": "light"},
+    ],
+    "tue": [
+        {"subject": "Matemática", "start": "07:00", "end": "07:50", "kind": "homework"},
+        {"subject": "Inglês", "start": "07:50", "end": "08:40", "kind": "homework"},
+        {"subject": "Português", "start": "08:40", "end": "09:30", "kind": "homework"},
+        {"subject": "Geografia", "start": "09:30", "end": "10:20", "kind": "homework"},
+        {"subject": "Artes", "start": "10:40", "end": "11:30", "kind": "light"},
+    ],
+    "wed": [
+        {"subject": "Ciências", "start": "07:00", "end": "07:50", "kind": "homework"},
+        {"subject": "Matemática", "start": "07:50", "end": "08:40", "kind": "homework"},
+        {"subject": "Português", "start": "08:40", "end": "09:30", "kind": "homework"},
+        {"subject": "Espanhol", "start": "09:30", "end": "10:20", "kind": "homework"},
+        {"subject": "Ensino Religioso", "start": "10:40", "end": "11:30", "kind": "light"},
+    ],
+    "thu": [
+        {"subject": "História", "start": "07:00", "end": "07:50", "kind": "homework"},
+        {"subject": "Inglês", "start": "07:50", "end": "08:40", "kind": "homework"},
+        {"subject": "Matemática", "start": "08:40", "end": "09:30", "kind": "homework"},
+        {"subject": "Português", "start": "09:30", "end": "10:20", "kind": "homework"},
+        {"subject": "Educação Física", "start": "10:40", "end": "11:30", "kind": "light"},
+    ],
+    "fri": [
+        {"subject": "Português", "start": "07:00", "end": "07:50", "kind": "review"},
+        {"subject": "Matemática", "start": "07:50", "end": "08:40", "kind": "review"},
+        {"subject": "Ciências", "start": "08:40", "end": "09:30", "kind": "review"},
+        {"subject": "Geografia", "start": "09:30", "end": "10:20", "kind": "review"},
+    ],
+}
+
+MALU_TUTOR_WINDOWS = {
+    "mon": [{"start": "19:00", "end": "20:30", "kind": "homework", "label": "Tarefa de casa"}],
+    "tue": [{"start": "19:00", "end": "20:30", "kind": "homework", "label": "Tarefa de casa"}],
+    "wed": [{"start": "19:00", "end": "20:30", "kind": "homework", "label": "Tarefa de casa"}],
+    "thu": [{"start": "19:00", "end": "20:30", "kind": "homework", "label": "Tarefa de casa"}],
+    "fri": [{"start": "19:00", "end": "20:00", "kind": "light", "label": "Revisão leve"}],
 }
 
 
@@ -126,36 +246,39 @@ async def seed() -> None:
                 student.avatar_color = payload["avatar_color"]
             students_by_name[payload["name"]] = student
 
-        profiles = {
+        profile_data = {
             "Lucas Henrique Sousa Angelim": {
                 "attention_span_minutes": 20,
                 "best_study_time": "afternoon",
                 "notes": "Em fase de alfabetização e acompanhamento diário de agenda escolar",
+                "weekly_schedule": LUCAS_WEEKLY_SCHEDULE,
+                "fixed_activities": [],
+                "tutor_windows": LUCAS_TUTOR_WINDOWS,
             },
             "Malu": {
                 "attention_span_minutes": 40,
                 "best_study_time": "morning",
                 "notes": "Aluna do 7º ano com foco em rotina, matemática e acompanhamento multidisciplinar",
+                "weekly_schedule": MALU_WEEKLY_SCHEDULE,
+                "fixed_activities": [],
+                "tutor_windows": MALU_TUTOR_WINDOWS,
             },
         }
-        for name, payload in profiles.items():
+        for name, payload in profile_data.items():
             student = students_by_name[name]
             profile = await session.scalar(select(StudentProfile).where(StudentProfile.student_id == student.id))
             if profile is None:
                 session.add(StudentProfile(student_id=student.id, difficulty_areas=[], strength_areas=[], **payload))
+            else:
+                profile.weekly_schedule = payload["weekly_schedule"]
+                profile.fixed_activities = payload["fixed_activities"]
+                profile.tutor_windows = payload["tutor_windows"]
             interests = await session.scalar(select(InterestProfile).where(InterestProfile.student_id == student.id))
             if interests is None:
                 session.add(InterestProfile(student_id=student.id, interests=[], favorite_subjects=[], hobbies=[], motivators=[], aversions=[]))
 
         subject_map: dict[str, Subject] = {}
-        allowed_first_fund_slugs = {
-            "portugues-1fund",
-            "matematica-1fund",
-            "ciencias-1fund",
-            "geografia-1fund",
-            "historia-1fund",
-            "ciencias-humanas-1fund",
-        }
+        allowed_first_fund_slugs = {s["slug"] for s in SUBJECTS if s["grade"] == "1_fund"}
         for payload in SUBJECTS:
             subject = await session.scalar(select(Subject).where(Subject.slug == payload["slug"]))
             if subject is None:

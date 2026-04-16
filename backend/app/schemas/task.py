@@ -24,6 +24,8 @@ class TaskRead(ORMModel):
     estimated_minutes: int | None
     completed_at: datetime | None
     source: str
+    pages: str | None = None
+    book_reference: str | None = None
     created_at: datetime
     updated_at: datetime
 
@@ -42,6 +44,8 @@ class TaskCreate(BaseModel):
     parent_notes: str | None = None
     estimated_minutes: int | None = None
     source: str = "manual"
+    pages: str | None = Field(default=None, max_length=100)
+    book_reference: str | None = Field(default=None, max_length=255)
 
 
 class TaskUpdate(BaseModel):
@@ -57,6 +61,8 @@ class TaskUpdate(BaseModel):
     parent_notes: str | None = None
     estimated_minutes: int | None = None
     source: str | None = None
+    pages: str | None = Field(default=None, max_length=100)
+    book_reference: str | None = Field(default=None, max_length=255)
 
 
 class TaskStatusUpdate(BaseModel):
@@ -72,6 +78,8 @@ class AgendaTaskImportItem(BaseModel):
     homework_text: str | None = None
     teacher_name: str | None = Field(default=None, max_length=255)
     raw_text: str | None = None
+    pages: str | None = Field(default=None, max_length=100)
+    book_reference: str | None = Field(default=None, max_length=255)
 
 
 class AgendaTaskImportRequest(BaseModel):

@@ -1,11 +1,57 @@
 from __future__ import annotations
 
 from datetime import date
+from enum import Enum
 from uuid import UUID
 
 from pydantic import BaseModel, Field
 
 from app.schemas.common import ORMModel
+
+
+class Weekday(str, Enum):
+    mon = "mon"
+    tue = "tue"
+    wed = "wed"
+    thu = "thu"
+    fri = "fri"
+    sat = "sat"
+    sun = "sun"
+
+
+class SessionKind(str, Enum):
+    homework = "homework"
+    reading = "reading"
+    review = "review"
+    light = "light"
+    weekly_prep = "weekly_prep"
+    free = "free"
+
+
+class ClassBlock(BaseModel):
+    subject: str
+    start: str  # HH:MM
+    end: str    # HH:MM
+    kind: SessionKind = SessionKind.homework
+
+
+class FixedActivity(BaseModel):
+    name: str
+    weekday: Weekday
+    start: str  # HH:MM
+    end: str    # HH:MM
+    priority: int = 1
+
+
+class TutorWindow(BaseModel):
+    start: str  # HH:MM
+    end: str    # HH:MM
+    kind: SessionKind = SessionKind.homework
+    label: str | None = None
+
+
+WeeklySchedule = dict[str, list[ClassBlock]]
+TutorWindowsByDay = dict[str, list[TutorWindow]]
 
 
 class StudentProfileRead(ORMModel):
@@ -17,6 +63,9 @@ class StudentProfileRead(ORMModel):
     difficulty_areas: list[str]
     strength_areas: list[str]
     notes: str | None
+    weekly_schedule: dict = Field(default_factory=dict)
+    fixed_activities: list[dict] = Field(default_factory=list)
+    tutor_windows: dict = Field(default_factory=dict)
 
 
 class StudentProfileUpdate(BaseModel):
@@ -26,6 +75,9 @@ class StudentProfileUpdate(BaseModel):
     difficulty_areas: list[str] | None = None
     strength_areas: list[str] | None = None
     notes: str | None = None
+    weekly_schedule: dict | None = None
+    fixed_activities: list[dict] | None = None
+    tutor_windows: dict | None = None
 
 
 class InterestProfileRead(ORMModel):

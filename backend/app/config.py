@@ -21,6 +21,10 @@ class Settings(BaseSettings):
     openclaw_ingest_secret: str = Field(default="", alias="OPENCLAW_INGEST_SECRET")
     openrouter_api_key: str = Field(default="", alias="OPENROUTER_API_KEY")
     openrouter_model: str = Field(default="anthropic/claude-haiku-4-5", alias="OPENROUTER_MODEL")
+    openai_api_key: str = Field(default="", alias="OPENAI_API_KEY")
+    openai_tts_model: str = Field(default="tts-1", alias="OPENAI_TTS_MODEL")
+    openai_tts_voice: str = Field(default="nova", alias="OPENAI_TTS_VOICE")
+    tutor_lucas_model: str = Field(default="openai/gpt-4o-mini", alias="TUTOR_LUCAS_MODEL")
 
     @property
     def upload_max_size_bytes(self) -> int:

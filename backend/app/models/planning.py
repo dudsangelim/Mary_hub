@@ -36,3 +36,10 @@ class StudySession(SoftDeleteMixin, TimestampMixin, Base):
     actual_end: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     status: Mapped[str] = mapped_column(String(30), default="scheduled")
     notes: Mapped[str | None] = mapped_column(Text, nullable=True)
+
+    # v0.2 — Session Engine
+    student_id: Mapped[str | None] = mapped_column(UUID(as_uuid=True), ForeignKey("students.id"), nullable=True)
+    session_kind: Mapped[str] = mapped_column(String(30), default="homework")
+    runtime_state: Mapped[dict] = mapped_column(JSONB, default=dict)
+    steps: Mapped[list[dict]] = mapped_column(JSONB, default=list)
+    outcome: Mapped[dict] = mapped_column(JSONB, default=dict)

@@ -225,6 +225,8 @@ async def import_agenda_tasks(
                 parent_notes=parent_notes,
                 source=f"{payload.source_app}_agenda",
                 completed_at=datetime.now(UTC) if status == "done" else None,
+                pages=item.pages,
+                book_reference=item.book_reference,
             )
             session.add(existing_task)
             created += 1
@@ -250,6 +252,12 @@ async def import_agenda_tasks(
         if existing_task.status != status:
             existing_task.status = status
             existing_task.completed_at = datetime.now(UTC) if status == "done" else None
+            has_changes = True
+        if existing_task.pages != item.pages:
+            existing_task.pages = item.pages
+            has_changes = True
+        if existing_task.book_reference != item.book_reference:
+            existing_task.book_reference = item.book_reference
             has_changes = True
 
         if has_changes:

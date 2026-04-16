@@ -49,6 +49,8 @@ class SchoolTask(SoftDeleteMixin, TimestampMixin, Base):
     estimated_minutes: Mapped[int | None] = mapped_column(Integer, nullable=True)
     completed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     source: Mapped[str] = mapped_column(String(50), default="manual")
+    pages: Mapped[str | None] = mapped_column(String(100), nullable=True)
+    book_reference: Mapped[str | None] = mapped_column(String(255), nullable=True)
 
     student = relationship("Student", back_populates="tasks")
     subject = relationship("Subject")

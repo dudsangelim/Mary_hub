@@ -18,6 +18,11 @@ class StudentProfile(TimestampMixin, Base):
     strength_areas: Mapped[list[str]] = mapped_column(JSONB, default=list)
     notes: Mapped[str | None] = mapped_column(Text, nullable=True)
 
+    # v0.2 — Session Engine fundamentals
+    weekly_schedule: Mapped[dict] = mapped_column(JSONB, default=dict)
+    fixed_activities: Mapped[list[dict]] = mapped_column(JSONB, default=list)
+    tutor_windows: Mapped[dict] = mapped_column(JSONB, default=dict)
+
     student = relationship("Student", back_populates="profile")
 
 
