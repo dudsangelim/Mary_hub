@@ -14,6 +14,7 @@ from app.models.provider import ProviderAccount, ProviderSyncLog
 from app.models.report import MaryReport
 from app.schemas.provider import PlurallAccountUpsert
 from app.security import decrypt_provider_credentials, encrypt_provider_credentials
+from app.services.plurall_scraper import run_plurall_sync
 
 PLURALL_PROVIDER_NAME = "plurall"
 PLURALL_PROVIDER_TYPE = "school_portal"
@@ -319,9 +320,45 @@ async def trigger_plurall_sync(session: AsyncSession, guardian: Guardian, accoun
     account = await get_provider_account(session, guardian, account_id)
     credentials = decrypt_provider_credentials(account.credentials_encrypted)
     student = await get_family_student(session, guardian, account.student_id)
-    snapshot = dict(PLURALL_MAPPED_PORTAL_SNAPSHOT)
 
     started_at = datetime.now(UTC)
+
+    # Attempt real scraping via the local scraping service (Playwright)
+    scrape_result = await run_plurall_sync(credentials)
+
+    if scrape_result.success and scrape_result.student_name:
+        # Use scraped data
+        snapshot = {
+            "student_name": scrape_result.student_name,
+            "student_role": scrape_result.student_role,
+            "school_name": scrape_result.school_name,
+            "class_name": scrape_result.class_name,
+            "grade": scrape_result.grade,
+            "grade_label": scrape_result.grade_label,
+            "modules_discovered": scrape_result.modules_discovered,
+            "supports_assignments": scrape_result.supports_assignments,
+            "supports_books": scrape_result.supports_books,
+            "supports_assessments": scrape_result.supports_assessments,
+            "supports_results": scrape_result.supports_results,
+        }
+        sync_status = "synced"
+        sync_error_message = (
+            f"Sync real via Playwright concluído. "
+            f"Módulos detectados: {', '.join(scrape_result.modules_discovered) or 'nenhum'}."
+        )
+        sync_mode = "live_scrape"
+    else:
+        # Fallback to mapped snapshot when scraping fails
+        snapshot = dict(PLURALL_MAPPED_PORTAL_SNAPSHOT)
+        sync_status = "imported"
+        error_detail = scrape_result.error or "Serviço de scraping indisponível"
+        sync_error_message = (
+            f"Scraping automático falhou ({error_detail}). "
+            "Importado snapshot mapeado. Verifique se o serviço de scraping está rodando "
+            "e se as credenciais do Plurall estão corretas."
+        )
+        sync_mode = "portal_snapshot_fallback"
+
     student.name = snapshot["student_name"]
     student.school_name = snapshot["school_name"]
     student.grade = snapshot["grade"]
@@ -335,25 +372,24 @@ async def trigger_plurall_sync(session: AsyncSession, guardian: Guardian, accoun
         **(account.sync_config or {}),
         "last_mapped_student_name": snapshot["student_name"],
         "last_mapped_modules": snapshot["modules_discovered"],
-        "last_sync_mode": "portal_snapshot_import",
+        "last_sync_mode": sync_mode,
     }
 
     sync_log = ProviderSyncLog(
         provider_account_id=account.id,
         sync_type="manual",
-        status="imported",
+        status=sync_status,
         items_found=5 + len(PLURALL_LIBRARY_CATALOG),
         items_synced=2 + library_changes,
         items_failed=0,
-        error_message=(
-            "Login no Plurall validado. O Mary importou o snapshot do portal, atualizou "
-            "os dados escolares do aluno e materializou a biblioteca base do Lucas."
-        ),
+        error_message=sync_error_message,
         started_at=started_at,
-        completed_at=started_at,
+        completed_at=datetime.now(UTC),
         sync_metadata={
             "provider": PLURALL_PROVIDER_NAME,
             "username_hint": credentials.get("username", "")[:3],
+            "scrape_success": scrape_result.success,
+            "scrape_mode": sync_mode,
             "student_name": snapshot["student_name"],
             "student_role": snapshot["student_role"],
             "school_name": snapshot["school_name"],
@@ -365,15 +401,6 @@ async def trigger_plurall_sync(session: AsyncSession, guardian: Guardian, accoun
             "supports_assessments": snapshot["supports_assessments"],
             "supports_results": snapshot["supports_results"],
             "library_catalog_titles": [material.title for material in library_materials],
-            "planned_ingestion_channels": [
-                "manual_portal_sync",
-                "telegram_openclaw",
-            ],
-            "imports_completed": [
-                "student_profile_update",
-                "portal_snapshot_report",
-                "library_catalog_materials",
-            ],
         },
     )
     session.add(sync_log)
