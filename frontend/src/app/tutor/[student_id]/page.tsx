@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
+import { apiFetch } from "@/lib/api";
 import { createOrGetSession, nextStep, requestTTS, getTTSAudioUrl, TutorSession, SessionStep } from "@/lib/tutorApi";
 import WelcomeScreen from "@/components/tutor/WelcomeScreen";
 import StepScreen from "@/components/tutor/StepScreen";
@@ -11,6 +12,7 @@ type Screen = "loading" | "welcome" | "task" | "celebration" | "error";
 
 export default function TutorPage() {
   const { student_id } = useParams<{ student_id: string }>();
+  const router = useRouter();
 
   const [screen, setScreen] = useState<Screen>("loading");
   const [session, setSession] = useState<TutorSession | null>(null);
@@ -96,7 +98,24 @@ export default function TutorPage() {
     }
   };
 
-  const studentName = session?.student_name ?? "Lucas";
+  const handleStuck = async () => {
+    if (!session || !currentStep) return;
+    setLoading(true);
+    try {
+      const stepId = String(currentStep.index);
+      await apiFetch(`/tutor/sessions/${session.id}/stuck`, {
+        method: "POST",
+        body: JSON.stringify({ step_id: stepId, reason: "Criança pediu ajuda" }),
+      });
+      alert("Tudo bem! Pede pro papai ou mamãe te ajudar 😊");
+    } catch {
+      // silencioso
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const studentName = (session?.student_name ?? "Lucas").split(" ")[0];
 
   if (screen === "loading") {
     return (
@@ -109,7 +128,15 @@ export default function TutorPage() {
   if (screen === "error") {
     return (
       <div className="flex min-h-screen items-center justify-center bg-red-50 p-6">
-        <p className="text-center text-xl text-red-600">{error ?? "Erro desconhecido."}</p>
+        <div className="text-center">
+          <p className="text-xl text-red-600">{error ?? "Erro desconhecido."}</p>
+          <button
+            onClick={() => router.push("/dashboard")}
+            className="mt-4 rounded-2xl bg-slate-100 px-6 py-3 text-sm font-semibold text-slate-700"
+          >
+            Voltar ao painel
+          </button>
+        </div>
       </div>
     );
   }
@@ -140,6 +167,7 @@ export default function TutorPage() {
         totalSteps={taskSteps.length}
         audioUrl={audioUrl}
         onDone={handleDone}
+        onStuck={handleStuck}
         loading={loading}
       />
     );

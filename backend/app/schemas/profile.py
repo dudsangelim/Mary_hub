@@ -25,6 +25,7 @@ class SessionKind(str, Enum):
     review = "review"
     light = "light"
     weekly_prep = "weekly_prep"
+    self_study = "self_study"
     free = "free"
 
 
@@ -37,9 +38,10 @@ class ClassBlock(BaseModel):
 
 class FixedActivity(BaseModel):
     name: str
-    weekday: Weekday
+    weekdays: list[Weekday]
     start: str  # HH:MM
     end: str    # HH:MM
+    blocks_tutor: bool = True
     priority: int = 1
 
 

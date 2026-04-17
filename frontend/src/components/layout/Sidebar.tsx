@@ -9,11 +9,12 @@ const items = [
   { href: "/students", label: "Alunos" },
   { href: "/materials", label: "Materiais" },
   { href: "/tasks", label: "Tarefas" },
-  { href: "/integrations", label: "Integrações" }
+  { href: "/integrations", label: "Integrações" },
 ];
 
 export function Sidebar() {
   const pathname = usePathname();
+  const isTutor = pathname.startsWith("/tutor");
 
   return (
     <aside className="hidden w-64 rounded-[2rem] bg-slate-950 p-6 text-white lg:block">
@@ -32,6 +33,14 @@ export function Sidebar() {
           </Link>
         ))}
       </nav>
+      <div className="mt-6">
+        <Link
+          href="/students"
+          className={`block rounded-2xl px-4 py-3 text-center text-sm font-semibold transition ${isTutor ? "bg-emerald-500 text-white" : "bg-emerald-500/20 text-emerald-300 hover:bg-emerald-500/30"}`}
+        >
+          Tutor
+        </Link>
+      </div>
     </aside>
   );
 }

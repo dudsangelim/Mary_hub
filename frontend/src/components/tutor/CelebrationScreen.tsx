@@ -26,7 +26,7 @@ export default function CelebrationScreen({ studentName, audioUrl, completedTask
       <div className="w-full max-w-sm pb-4">
         <BigButton
           label="Voltar para o início"
-          onClick={() => router.push("/")}
+          onClick={() => router.push("/dashboard")}
           variant="secondary"
         />
       </div>

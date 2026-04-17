@@ -3,7 +3,7 @@ from __future__ import annotations
 import hashlib
 
 from app.config import settings
-from app.redis import redis_client
+from app.redis import redis_binary_client as redis_client
 
 TTS_CACHE_TTL = 60 * 60 * 24 * 7  # 7 days
 TTS_CACHE_PREFIX = "tts:audio:"

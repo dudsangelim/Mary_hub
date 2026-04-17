@@ -132,18 +132,11 @@ async def build_session_steps(
 
 
 def _build_intro_instruction(session_kind: str, task_count: int) -> str:
-    kind_labels = {
-        "homework": "tarefas de casa",
-        "review": "revisão",
-        "light": "atividades leves",
-        "weekly_prep": "preparação da semana",
-        "reading": "leitura",
-        "free": "tempo livre",
-    }
-    label = kind_labels.get(session_kind, "tarefas")
     if task_count == 0:
-        return f"Olá! Não há {label} para hoje. Que tal revisar algo que você aprendeu?"
-    return f"Olá! Temos {task_count} {'tarefa' if task_count == 1 else 'tarefas'} de {label} para hoje. Vamos começar!"
+        return "Olá! Hoje não tem tarefa. Que tal revisar algo que você aprendeu?"
+    if task_count == 1:
+        return "Olá! Hoje você tem 1 tarefa. Vamos lá!"
+    return f"Olá! Hoje você tem {task_count} tarefas. Vamos lá!"
 
 
 def _build_task_instruction(task: SchoolTask, subject_name: str | None) -> str:

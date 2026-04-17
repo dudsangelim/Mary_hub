@@ -58,7 +58,6 @@ class TutorSessionCreate(BaseModel):
 
 
 class TutorNextRequest(BaseModel):
-    session_id: UUID
     step_index: int
     mark_done: bool = False
 

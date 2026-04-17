@@ -10,10 +10,11 @@ interface StepScreenProps {
   totalSteps: number;
   audioUrl: string | null;
   onDone: () => void;
+  onStuck?: () => void;
   loading: boolean;
 }
 
-export default function StepScreen({ step, stepNumber, totalSteps, audioUrl, onDone, loading }: StepScreenProps) {
+export default function StepScreen({ step, stepNumber, totalSteps, audioUrl, onDone, onStuck, loading }: StepScreenProps) {
   return (
     <div className="flex min-h-screen flex-col bg-white p-6">
       <div className="mb-4 text-sm text-gray-400">
@@ -45,13 +46,22 @@ export default function StepScreen({ step, stepNumber, totalSteps, audioUrl, onD
         <AudioPlayer audioUrl={audioUrl} autoPlay />
       </div>
 
-      <div className="pb-4">
+      <div className="flex flex-col gap-3 pb-4">
         <BigButton
           label={loading ? "Salvando..." : "Feito! ✅"}
           onClick={onDone}
           disabled={loading}
           variant="success"
         />
+        {onStuck && (
+          <button
+            onClick={onStuck}
+            disabled={loading}
+            className="w-full rounded-3xl bg-yellow-500 px-6 py-6 text-2xl font-bold text-white shadow-lg transition-all duration-150 hover:bg-yellow-600 active:scale-95 active:bg-yellow-700 disabled:opacity-50"
+          >
+            Travei 🤔
+          </button>
+        )}
       </div>
     </div>
   );

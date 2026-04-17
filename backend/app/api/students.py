@@ -29,7 +29,7 @@ async def list_students(current_guardian: CurrentGuardian, session: DbSession) -
         (
             await session.scalars(
                 select(Student)
-                .where(Student.family_id == current_guardian.family_id)
+                .where(Student.family_id == current_guardian.family_id, Student.is_active == True)
                 .options(selectinload(Student.profile), selectinload(Student.interests))
                 .order_by(Student.name)
             )

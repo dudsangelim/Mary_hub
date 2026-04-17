@@ -160,6 +160,8 @@ async def create_or_get_session(
         payload.scheduled_date,
         session_kind,
     )
+    await session.commit()
+    await session.refresh(study_session)
     return _build_session_read(study_session, student.name)
 
 
@@ -341,13 +343,10 @@ async def request_tts(
 
 
 @router.get("/tts/{audio_key}")
-async def stream_tts(
-    audio_key: str,
-    current_guardian: CurrentGuardian,
-) -> Response:
-    from app.redis import redis_client
+async def stream_tts(audio_key: str) -> Response:
+    from app.redis import redis_binary_client
     full_key = f"tts:audio:{audio_key}" if not audio_key.startswith("tts:audio:") else audio_key
-    data = await redis_client.get(full_key)
-    if not data:
+    data = await redis_binary_client.get(full_key)
+    if data is None:
         raise error_response("AUDIO_NOT_FOUND", "Audio not found or expired", http_status=404)
-    return Response(content=data, media_type="audio/mpeg")
+    return Response(content=data, media_type="audio/mpeg", headers={"Cache-Control": "public, max-age=604800"})

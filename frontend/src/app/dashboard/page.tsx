@@ -55,14 +55,19 @@ export default function DashboardPage() {
         <div className="grid gap-4 xl:grid-cols-2">
           {summary.students.map((student) => (
             <article key={student.student_id} className="rounded-[2rem] bg-white p-6 shadow-sm">
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between gap-3">
                 <div>
                   <h3 className="text-2xl font-semibold text-slate-900">{student.student_name}</h3>
                   <p className="mt-1 text-sm text-slate-600">Resumo rápido por aluno</p>
                 </div>
-                <Link href={`/tasks?student_id=${student.student_id}`} className="rounded-2xl bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-700">
-                  Ver tarefas
-                </Link>
+                <div className="flex shrink-0 flex-col gap-2 sm:flex-row">
+                  <Link href={`/tutor/${student.student_id}`} className="rounded-2xl bg-emerald-500 px-5 py-2.5 text-sm font-semibold text-white hover:bg-emerald-600">
+                    Iniciar Tutor
+                  </Link>
+                  <Link href={`/tasks?student_id=${student.student_id}`} className="rounded-2xl bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-200">
+                    Ver tarefas
+                  </Link>
+                </div>
               </div>
               <div className="mt-6 grid grid-cols-2 gap-4 md:grid-cols-3">
                 <div className="rounded-2xl bg-amber-50 p-4">
